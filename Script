@@ -1,0 +1,67 @@
+Sub Stock()
+
+'Declare variables
+Dim ticker_symbol As String
+Dim yearly_price_change As Double
+Dim yearly_percentage_change As Double
+Dim total_stock_volume As LongLong
+Dim open_price As Double
+Dim close_price As Double
+Dim Summary_Table_Row As Integer
+
+'Count to the last row used in the first column; ticker symbol
+lastrow = Cells(Rows.Count, 1).End(xlUp).Row
+
+'Set counters
+Summary_Table_Row = 2
+total_stock_volume = 0
+yearly_price_change = 0
+yearly_percent_change = 0
+open_price = 0
+close_price = 0
+
+'Scan until the ticker symbol changes; while scanning sum the total stock volume, calculate the yearly price change and the yearly percentage change and move totals to the summary table
+
+For i = 2 To lastrow
+    If Cells(i + 1, 1).Value <> Cells(i, 1).Value Then
+    total_stock_volume = total_stock_volume + Cells(i, 7).Value
+    ticker_symbol = Cells(i, 1).Value
+    yearly_price_change = Cells(i, 6).Value - open_price
+    yearly_percent_change = (yearly_price_change / open_price) * 100
+    
+Cells(Summary_Table_Row, 10).Value = ticker_symbol
+Cells(Summary_Table_Row, 13).Value = total_stock_volume
+Cells(Summary_Table_Row, 11).Value = yearly_price_change
+Cells(Summary_Table_Row, 12).Value = yearly_percent_change
+
+'If percent change is positive then green if negative then red
+If Cells(Summary_Table_Row, 12).Value >= 0 Then
+    Cells(Summary_Table_Row, 12).Interior.ColorIndex = 4
+ElseIf Cells(Summary_Table_Row, 12).Value < 0 Then
+    Cells(Summary_Table_Row, 12).Interior.ColorIndex = 3
+End If
+
+'Reset the counters so once the ticker symbols aren’t equal and it does the above calculations it starts over at 0 and moves to the next row of the summary table
+
+    Summary_Table_Row = Summary_Table_Row + 1
+    total_stock_volume = 0
+    yearly_price_change = 0
+    yearly_percent_change = 0
+
+'If the ticker symbols are equal sum the total stock volume and the opening price in preparation for when the ticker symbols are no longer equal, and the above calculations need to be made.
+    
+Else
+    total_stock_volume = total_stock_volume + Cells(i, 7).Value
+    If Cells(i - 1, 1).Value <> Cells(i, 1).Value Then
+    open_price = Cells(i, 3).Value
+
+Else
+    End If
+End If
+
+Next i
+
+End Sub
+
+
+
